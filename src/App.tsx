@@ -3,6 +3,7 @@ import { portfolioData } from './data/portfolioData';
 import { buildHeroNetworkSvg, forProject } from './utils/vizEngine';
 import { downloadResumePdf } from './utils/generateResumePdf';
 import { LinuxLabPage } from './components/LinuxLabPage';
+import { EntrancePreloader } from './components/EntrancePreloader';
 
 const ICON = {
   linkedin: (
@@ -164,6 +165,7 @@ export default function App() {
     return 'auto';
   });
 
+  const [showEntrance, setShowEntrance] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [modalProjectIndex, setModalProjectIndex] = useState<number | null>(null);
 
@@ -210,9 +212,9 @@ export default function App() {
     window.dispatchEvent(new Event('themechange'));
   }, [themeMode]);
 
-  // Body overflow lock for mobile menu or project modal
+  // Body overflow lock for entrance window, mobile menu, or project modal
   useEffect(() => {
-    if (mobileMenuOpen || modalProjectIndex !== null) {
+    if (showEntrance || mobileMenuOpen || modalProjectIndex !== null) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -220,7 +222,7 @@ export default function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [mobileMenuOpen, modalProjectIndex]);
+  }, [showEntrance, mobileMenuOpen, modalProjectIndex]);
 
   // Escape key handler for modal & mobile menu
   useEffect(() => {
@@ -403,16 +405,19 @@ export default function App() {
       if (exp) io.observe(exp);
     }
 
-    // 5. Hero staged entrance
-    const hero = document.getElementById('hero');
-    const heroName = document.getElementById('heroName');
-    const heroTimer = setTimeout(() => {
-      if (hero) {
-        hero.classList.add('in');
-        hero.querySelectorAll<HTMLElement>('[data-reveal]').forEach(show);
-      }
-      if (heroName) heroName.classList.add('in');
-    }, 120);
+    // 5. Hero staged entrance (triggered once entrance window finishes)
+    let heroTimer: ReturnType<typeof setTimeout> | null = null;
+    if (!showEntrance) {
+      const hero = document.getElementById('hero');
+      const heroName = document.getElementById('heroName');
+      heroTimer = setTimeout(() => {
+        if (hero) {
+          hero.classList.add('in');
+          hero.querySelectorAll<HTMLElement>('[data-reveal]').forEach(show);
+        }
+        if (heroName) heroName.classList.add('in');
+      }, 90);
+    }
 
     // 6. Count-up for % metrics
     let cio: IntersectionObserver | null = null;
@@ -578,7 +583,7 @@ export default function App() {
     frame();
 
     return () => {
-      clearTimeout(heroTimer);
+      if (heroTimer) clearTimeout(heroTimer);
       io?.disconnect();
       cio?.disconnect();
       sio?.disconnect();
@@ -587,7 +592,7 @@ export default function App() {
       window.removeEventListener('resize', onScroll);
       window.removeEventListener('themechange', onThemeChange);
     };
-  }, [view]);
+  }, [view, showEntrance]);
 
   // Contact form validation & submission
   const isFormValid =
@@ -686,6 +691,14 @@ export default function App() {
 
   return (
     <div ref={rootRef}>
+      {showEntrance && (
+        <EntrancePreloader
+          name={P.name}
+          role="AWS DEVOPS ENGINEER"
+          location={P.location}
+          onComplete={() => setShowEntrance(false)}
+        />
+      )}
       <div className="progress" id="progress" />
       <div className="grain" aria-hidden="true" />
       <div className="tip" id="tip" role="status" />
