@@ -52,7 +52,7 @@ export function createResumePdfDoc(): jsPDF {
   doc.setFontSize(8.2);
   doc.setTextColor(30, 41, 59);
   const summaryLines = doc.splitTextToSize(
-    'AWS DevOps Engineer with 2+ years of experience across cloud monitoring, infrastructure automation, and site reliability engineering (SRE) on AWS. Skilled in Infrastructure as Code (Terraform, AWS CloudFormation), CI/CD automation (Jenkins, GitHub Actions, AWS CodePipeline), and centralized observability using Prometheus, Grafana, Node Exporter, and Alertmanager. Experienced monitoring EC2 instances, Linux servers, Docker containers, and Kubernetes/EKS workloads; building Grafana dashboards with PromQL; and automating Slack and email alerting to reduce Mean Time to Detect (MTTD). Proficient in Linux administration, AWS core services (EC2, IAM, VPC, CloudWatch), and applying the AWS Well-Architected Framework to improve reliability, security, performance, and cost optimization. Strong track record in technical documentation, incident response, and cross-functional collaboration.',
+    'AWS DevOps Engineer with 2+ years of experience specializing in site reliability engineering (SRE), cloud monitoring, and infrastructure automation. Highly skilled in Infrastructure as Code (Terraform, CloudFormation), CI/CD pipelines (Jenkins, GitHub Actions), and centralized observability (Prometheus, Grafana). Proven ability to manage AWS environments, optimize performance using the AWS Well-Architected Framework, and reduce Mean Time to Detect (MTTD).',
     contentWidth
   );
   doc.text(summaryLines, margin, y, { lineHeightFactor: 1.14 });

@@ -61,22 +61,25 @@ const NAV_ITEMS = [
 ];
 
 const COMPETENCIES = [
-  'AWS Cloud Infrastructure',
-  'Terraform IaC',
-  'Prometheus & Grafana',
-  'Jenkins CI/CD',
-  'Node Exporter & PromQL',
-  'Alertmanager & SRE',
-  'AWS Well-Architected Framework',
-  'Incident Response & MTTD Reduction',
+  'Site Reliability Engineering (SRE)',
+  'Cloud Monitoring & Observability',
+  'Infrastructure Automation',
+  'Infrastructure as Code (Terraform, CloudFormation)',
+  'CI/CD Pipelines (Jenkins, GitHub Actions)',
+  'Centralized Observability (Prometheus, Grafana)',
+  'AWS Environment Management',
+  'AWS Well-Architected Framework & MTTD Reduction',
 ];
 
 const SUMMARY_HIGHLIGHTS = [
+  'site reliability engineering (SRE)',
+  'cloud monitoring',
+  'infrastructure automation',
   'Infrastructure as Code',
-  'CI/CD automation',
+  'CI/CD pipelines',
   'centralized observability',
-  'Mean Time to Detect (MTTD)',
   'AWS Well-Architected Framework',
+  'Mean Time to Detect (MTTD)',
 ];
 
 function renderAboutTokens(summary: string) {

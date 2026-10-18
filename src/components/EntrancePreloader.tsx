@@ -590,9 +590,9 @@ export const EntrancePreloader: React.FC<EntrancePreloaderProps> = ({
                 <stop offset="100%" stopColor="transparent" />
               </linearGradient>
               <linearGradient id="beamWakeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
-                <stop offset="0%" stopColor="#f3f2ee" stopOpacity="0.98" />
-                <stop offset="72%" stopColor="#f3f2ee" stopOpacity="0.92" />
-                <stop offset="92%" stopColor="var(--cyan)" stopOpacity="0.35" />
+                <stop offset="0%" stopColor="var(--bg)" stopOpacity="0.98" />
+                <stop offset="72%" stopColor="var(--bg)" stopOpacity="0.92" />
+                <stop offset="92%" stopColor="var(--cyan)" stopOpacity="0.38" />
                 <stop offset="100%" stopColor="transparent" stopOpacity="0" />
               </linearGradient>
               <filter id="beamGlowFilter" x="-20%" y="-20%" width="140%" height="140%">
