@@ -80,6 +80,7 @@ em,.serif{font-family:var(--serif);font-style:italic;font-weight:400;letter-spac
 .progress{position:fixed;left:0;top:0;height:2px;width:100%;transform-origin:0 50%;transform:scaleX(0);
   background:linear-gradient(90deg,var(--cyan),var(--violet));z-index:100}
 
+
 /* ---------- NAV ---------- */
 .nav{position:fixed;inset:0 0 auto 0;z-index:80;transition:transform .6s var(--ease),background-color .6s,border-color .6s;
   border-bottom:1px solid transparent}

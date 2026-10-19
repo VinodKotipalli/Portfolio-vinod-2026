@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { portfolioData } from './data/portfolioData';
 import { buildHeroNetworkSvg, forProject } from './utils/vizEngine';
 import { downloadResumePdf } from './utils/generateResumePdf';
@@ -145,6 +145,10 @@ export default function App() {
     }
     return 'auto';
   });
+
+  const handleThemeToggle = useCallback(() => {
+    setThemeMode((m) => (m === 'dark' ? 'auto' : 'dark'));
+  }, []);
 
   // Entrance Preloader state
   const [showEntrance, setShowEntrance] = useState<boolean>(true);
@@ -712,7 +716,7 @@ export default function App() {
               type="button"
               className="icon-btn"
               id="themeBtn"
-              onClick={() => setThemeMode((prev) => (prev === 'dark' ? 'auto' : 'dark'))}
+              onClick={handleThemeToggle}
               aria-label={forcedDark ? 'Switch to light mode' : 'Switch to dark mode'}
               title={forcedDark ? 'Switch to light mode' : 'Switch to dark mode'}
             >
@@ -783,6 +787,16 @@ export default function App() {
           ))}
         </div>
         <div className="row">
+          <button
+            type="button"
+            className="icon-btn"
+            onClick={handleThemeToggle}
+            aria-label={forcedDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            title={forcedDark ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {forcedDark ? ICON.sun : ICON.moon}
+            <span>{forcedDark ? 'Light Mode' : 'Dark Mode'}</span>
+          </button>
           <a
             className="icon-btn"
             href={S.linkedin}
@@ -808,15 +822,13 @@ export default function App() {
         {/* ================= HERO ================= */}
         <section className="sec hero relative" id="hero" data-tone="dark" data-screen-label="01 Hero">
           <div className="hero-net" id="heroNet" ref={heroNetRef}>
-            <div
-              className="w-full h-full"
-              dangerouslySetInnerHTML={{ __html: buildHeroNetworkSvg() }}
-            />
+            <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: buildHeroNetworkSvg() }} />
             <div className="fade-l" />
           </div>
           <div className="watermark" aria-hidden="true">
             {P.firstName.toUpperCase()}
           </div>
+
           <div className="wrap relative z-10">
             <div className="hero-top" data-reveal>
               <div className="pill">
@@ -863,18 +875,23 @@ export default function App() {
               <div className="cta" data-reveal>
                 <a className="btn primary" href={H.ctaPrimary.href}>
                   <span>{H.ctaPrimary.text}</span>
-                  <span className="arr">↓</span>
+                  <span className="arr">→</span>
                 </a>
-                <button
-                  type="button"
-                  className="btn ghost cursor-pointer"
-                  onClick={() => downloadResumePdf('Saivinod_Kotipalli_Resume.pdf')}
-                >
-                  {ICON.down}
-                  <span>{H.ctaResume.text}</span>
-                </button>
                 <a className="btn ghost" href={H.ctaSecondary.href}>
                   <span>{H.ctaSecondary.text}</span>
+                  <span className="arr">↗</span>
+                </a>
+                <a
+                  className="btn ghost"
+                  href={H.ctaResume.href}
+                  download="Saivinod_Kotipalli_Resume.pdf"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    downloadResumePdf('Saivinod_Kotipalli_Resume.pdf');
+                  }}
+                >
+                  <span>{H.ctaResume.text}</span>
+                  <span className="arr">↓</span>
                 </a>
               </div>
             </div>
@@ -882,16 +899,16 @@ export default function App() {
             <div className="hero-foot" data-reveal>
               <div className="scroll-cue">
                 <span className="ln" />
-                <span>SCROLL TO EXPLORE</span>
+                <span>Scroll to explore</span>
               </div>
               <div className="hero-badges">
                 <div className="badge">
-                  <b>99.9%</b>
-                  <span>PROD UPTIME</span>
+                  <b>2+</b>
+                  <span>Years AWS SRE</span>
                 </div>
                 <div className="badge">
-                  <b>∞</b>
-                  <span>OBSERVABILITY</span>
+                  <b>99.9%</b>
+                  <span>Uptime Target</span>
                 </div>
               </div>
             </div>
