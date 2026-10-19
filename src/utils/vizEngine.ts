@@ -77,7 +77,44 @@ export function buildHeroNetworkSvg(): string {
     ['cf', 'ecr'],
   ];
   const N = Object.fromEntries(nodes.map((n) => [n.id, n]));
-  let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMaxYMid slice"><g id="netG">`;
+  const farParticles = [
+    { cx: 240, cy: 180, r: 18, c: 'var(--cyan)', o: 0.08 },
+    { cx: 480, cy: 120, r: 26, c: 'var(--violet)', o: 0.07 },
+    { cx: 860, cy: 170, r: 32, c: 'var(--cyan)', o: 0.09 },
+    { cx: 340, cy: 520, r: 24, c: 'var(--violet)', o: 0.07 },
+    { cx: 680, cy: 310, r: 36, c: 'var(--cyan)', o: 0.08 },
+    { cx: 910, cy: 510, r: 28, c: 'var(--violet)', o: 0.08 },
+    { cx: 520, cy: 760, r: 22, c: 'var(--cyan)', o: 0.07 },
+  ];
+  const nearParticles = [
+    { cx: 310, cy: 240, r: 3.5, c: 'var(--cyan)', o: 0.42 },
+    { cx: 460, cy: 210, r: 2.5, c: 'var(--violet)', o: 0.38 },
+    { cx: 690, cy: 190, r: 4, c: 'var(--cyan)', o: 0.45 },
+    { cx: 830, cy: 320, r: 3, c: 'var(--violet)', o: 0.4 },
+    { cx: 520, cy: 420, r: 2.8, c: 'var(--cyan)', o: 0.36 },
+    { cx: 660, cy: 510, r: 3.8, c: 'var(--violet)', o: 0.44 },
+    { cx: 840, cy: 680, r: 3.2, c: 'var(--cyan)', o: 0.4 },
+    { cx: 430, cy: 630, r: 2.4, c: 'var(--violet)', o: 0.35 },
+    { cx: 740, cy: 290, r: 2.2, c: 'var(--cyan)', o: 0.5 },
+  ];
+  let s = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="xMaxYMid slice">
+    <defs>
+      <filter id="dofFarBlur" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="12" />
+      </filter>
+      <filter id="dofNearBlur" x="-50%" y="-50%" width="200%" height="200%">
+        <feGaussianBlur stdDeviation="1.4" />
+      </filter>
+    </defs>
+    <g id="heroParticlesFar" filter="url(#dofFarBlur)">`;
+  farParticles.forEach((p) => {
+    s += `<circle cx="${p.cx}" cy="${p.cy}" r="${p.r}" fill="${p.c}" opacity="${p.o}"/>`;
+  });
+  s += `</g><g id="heroParticlesNear" filter="url(#dofNearBlur)">`;
+  nearParticles.forEach((p) => {
+    s += `<circle cx="${p.cx}" cy="${p.cy}" r="${p.r}" fill="${p.c}" opacity="${p.o}"/>`;
+  });
+  s += `</g><g id="netG">`;
   s += `<circle cx="760" cy="420" r="150" fill="none" stroke="currentColor" stroke-opacity=".05"/>`;
   s += `<circle cx="760" cy="420" r="300" fill="none" stroke="currentColor" stroke-opacity=".04" stroke-dasharray="2 6"/>`;
   edges.forEach(([a, b], i) => {

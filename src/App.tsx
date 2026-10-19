@@ -2,8 +2,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { portfolioData } from './data/portfolioData';
 import { buildHeroNetworkSvg, forProject } from './utils/vizEngine';
 import { downloadResumePdf } from './utils/generateResumePdf';
-import { LinuxLabPage } from './components/LinuxLabPage';
-import { EntrancePreloader } from './components/EntrancePreloader';
 
 const ICON = {
   linkedin: (
@@ -138,24 +136,6 @@ export default function App() {
   const E = portfolioData.experience;
   const Ed = portfolioData.education;
 
-  // View state for embedded Linux Practice Lab vs Portfolio Home
-  const [view, setView] = useState<'home' | 'linux-lab'>(() => {
-    if (typeof window !== 'undefined') {
-      const p = window.location.pathname;
-      const s = window.location.search;
-      const h = window.location.hash;
-      if (
-        p === '/linux-lab' ||
-        p === '/linux-practice-lab' ||
-        s.includes('view=linux-lab') ||
-        h === '#linux-lab'
-      ) {
-        return 'linux-lab';
-      }
-    }
-    return 'home';
-  });
-
   // Theme state: 'auto' (scroll-driven light/dark tone) or 'dark' (forced dark) or 'light' (forced light)
   const [themeMode, setThemeMode] = useState<'auto' | 'dark'>(() => {
     if (typeof window !== 'undefined') {
@@ -165,7 +145,6 @@ export default function App() {
     return 'auto';
   });
 
-  const [showEntrance, setShowEntrance] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [modalProjectIndex, setModalProjectIndex] = useState<number | null>(null);
 
@@ -184,27 +163,6 @@ export default function App() {
   const stageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
 
-  // Sync popstate for Linux Lab navigation
-  useEffect(() => {
-    const onPop = () => {
-      const p = window.location.pathname;
-      const s = window.location.search;
-      const h = window.location.hash;
-      if (
-        p === '/linux-lab' ||
-        p === '/linux-practice-lab' ||
-        s.includes('view=linux-lab') ||
-        h === '#linux-lab'
-      ) {
-        setView('linux-lab');
-      } else {
-        setView('home');
-      }
-    };
-    window.addEventListener('popstate', onPop);
-    return () => window.removeEventListener('popstate', onPop);
-  }, []);
-
   // Theme sync
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode;
@@ -212,9 +170,9 @@ export default function App() {
     window.dispatchEvent(new Event('themechange'));
   }, [themeMode]);
 
-  // Body overflow lock for entrance window, mobile menu, or project modal
+  // Body overflow lock for mobile menu or project modal
   useEffect(() => {
-    if (showEntrance || mobileMenuOpen || modalProjectIndex !== null) {
+    if (mobileMenuOpen || modalProjectIndex !== null) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -222,7 +180,7 @@ export default function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [showEntrance, mobileMenuOpen, modalProjectIndex]);
+  }, [mobileMenuOpen, modalProjectIndex]);
 
   // Escape key handler for modal & mobile menu
   useEffect(() => {
@@ -246,8 +204,6 @@ export default function App() {
 
   // Master Motion, SVG, & Scroll Storytelling Engine (from motion.js + viz.js)
   useEffect(() => {
-    if (view !== 'home') return;
-
     const RM = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     const FINE = window.matchMedia('(pointer:fine)').matches;
     const htmlRoot = document.documentElement;
@@ -405,19 +361,16 @@ export default function App() {
       if (exp) io.observe(exp);
     }
 
-    // 5. Hero staged entrance (triggered once entrance window finishes)
-    let heroTimer: ReturnType<typeof setTimeout> | null = null;
-    if (!showEntrance) {
-      const hero = document.getElementById('hero');
-      const heroName = document.getElementById('heroName');
-      heroTimer = setTimeout(() => {
-        if (hero) {
-          hero.classList.add('in');
-          hero.querySelectorAll<HTMLElement>('[data-reveal]').forEach(show);
-        }
-        if (heroName) heroName.classList.add('in');
-      }, 90);
-    }
+    // 5. Hero staged entrance
+    const hero = document.getElementById('hero');
+    const heroName = document.getElementById('heroName');
+    const heroTimer = setTimeout(() => {
+      if (hero) {
+        hero.classList.add('in');
+        hero.querySelectorAll<HTMLElement>('[data-reveal]').forEach(show);
+      }
+      if (heroName) heroName.classList.add('in');
+    }, 60);
 
     // 6. Count-up for % metrics
     let cio: IntersectionObserver | null = null;
@@ -592,7 +545,7 @@ export default function App() {
       window.removeEventListener('resize', onScroll);
       window.removeEventListener('themechange', onThemeChange);
     };
-  }, [view, showEntrance]);
+  }, []);
 
   // Contact form validation & submission
   const isFormValid =
@@ -668,21 +621,6 @@ export default function App() {
     }
   };
 
-  const handleLaunchLab = () => {
-    window.history.pushState({}, '', '/linux-lab');
-    setView('linux-lab');
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  };
-
-  const handleBackToPortfolio = () => {
-    window.history.pushState({}, '', '/');
-    setView('home');
-  };
-
-  if (view === 'linux-lab') {
-    return <LinuxLabPage onBackToPortfolio={handleBackToPortfolio} />;
-  }
-
   const [firstNameWord, ...restNameWords] = P.name.split(' ');
   const lastNameWord = restNameWords.join(' ');
   const forcedDark = themeMode === 'dark';
@@ -691,14 +629,6 @@ export default function App() {
 
   return (
     <div ref={rootRef}>
-      {showEntrance && (
-        <EntrancePreloader
-          name={P.name}
-          role="AWS DEVOPS ENGINEER"
-          location={P.location}
-          onComplete={() => setShowEntrance(false)}
-        />
-      )}
       <div className="progress" id="progress" />
       <div className="grain" aria-hidden="true" />
       <div className="tip" id="tip" role="status" />
@@ -1216,97 +1146,12 @@ export default function App() {
           </div>
         </section>
 
-        {/* ================= LINUX LAB ================= */}
-        <section
-          className="sec"
-          id="linux-practice-lab"
-          data-tone="dark"
-          data-screen-label="07 Linux Lab"
-          style={{ paddingTop: 0 }}
-        >
-          <div className="wrap">
-            <div className="sec-head">
-              <div>
-                <div className="eyebrow" data-reveal>
-                  <b>⌘</b> INTERACTIVE DEVOPS WORKSTATION
-                </div>
-                <h2 className="h-sec split" data-split>
-                  Unlimited Linux <em>Practice Lab</em>
-                </h2>
-              </div>
-              <p className="lede" data-reveal>
-                A real-world, sandboxed Linux terminal emulator and command workstation embedded directly in this portfolio. Practice unlimited Linux commands with an interactive terminal shell and real-time execution.
-              </p>
-            </div>
-            <div className="lab" data-reveal="scale">
-              <div
-                style={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  justifyContent: 'space-between',
-                  gap: '32px',
-                }}
-              >
-                <div>
-                  <div className="lab-tags">
-                    <span>Unlimited Practice</span>
-                    <span>100+ Curated DevOps Commands</span>
-                    <span>xterm.js Full Shell</span>
-                  </div>
-                  <h3>
-                    Real Shell Commands. Sandboxed Execution. <em>Free-form Practice.</em>
-                  </h3>
-                  <p>
-                    Enjoy unlimited practice across networking, file operations, permissions, process triage, and log filtering directly inside a responsive, sandboxed terminal shell.
-                  </p>
-                </div>
-              </div>
-              <div className="term">
-                <div className="layer-bar">
-                  <span className="tl">
-                    <i />
-                    <i />
-                    <i />
-                  </span>
-                  bash
-                </div>
-                <div className="term-body" id="termBody">
-                  <span className="p">$</span> ss -tulpn | grep 80
-                  <br />
-                  <span style={{ color: 'var(--moon)' }}>
-                    tcp  0  0 0.0.0.0:80  0.0.0.0:*  LISTEN  340/nginx
-                  </span>
-                  <br />
-                  <span className="p">$</span> <span className="caret" />
-                </div>
-                <div className="term-env">
-                  <span>Environment:</span>
-                  <b>Ubuntu 24.04 LTS Noble</b>
-                </div>
-                <div className="term-foot">
-                  <span>Interactive Command Runner</span>
-                  <span className="mono">Zero Lockouts</span>
-                </div>
-                <button
-                  type="button"
-                  className="launch"
-                  id="launch-linux-lab-button"
-                  onClick={handleLaunchLab}
-                >
-                  <span>Launch Linux Practice Lab</span>
-                  <span className="ar">→</span>
-                </button>
-              </div>
-            </div>
-          </div>
-        </section>
-
         {/* ================= CERTIFICATIONS ================= */}
         <section
           className="sec"
           id="certifications"
           data-tone="light"
-          data-screen-label="08 Certifications"
+          data-screen-label="07 Certifications"
         >
           <div className="wrap">
             <div className="sec-head">
@@ -1364,7 +1209,7 @@ export default function App() {
           className="sec"
           id="education"
           data-tone="light"
-          data-screen-label="09 Education"
+          data-screen-label="08 Education"
           style={{ paddingTop: 0 }}
         >
           <div className="wrap">
@@ -1414,7 +1259,7 @@ export default function App() {
         </section>
 
         {/* ================= CONTACT ================= */}
-        <section className="sec" id="contact" data-tone="dark" data-screen-label="10 Contact">
+        <section className="sec" id="contact" data-tone="dark" data-screen-label="09 Contact">
           <div className="wrap">
             <h2 className="sr">Contact</h2>
             <div className="contact-head">
@@ -1546,7 +1391,7 @@ export default function App() {
       </main>
 
       {/* ================= FOOTER ================= */}
-      <footer className="footer" data-tone="dark" id="footer" data-screen-label="11 Footer">
+      <footer className="footer" data-tone="dark" id="footer" data-screen-label="10 Footer">
         <div className="wrap">
           <div className="quotes">
             <div className="quote" data-reveal>
