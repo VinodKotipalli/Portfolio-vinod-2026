@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { portfolioData } from './data/portfolioData';
 import { buildHeroNetworkSvg, forProject } from './utils/vizEngine';
 import { downloadResumePdf } from './utils/generateResumePdf';
+import { EntrancePreloader } from './components/EntrancePreloader';
 
 const ICON = {
   linkedin: (
@@ -145,6 +146,8 @@ export default function App() {
     return 'auto';
   });
 
+  // Entrance Preloader state
+  const [showEntrance, setShowEntrance] = useState<boolean>(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [modalProjectIndex, setModalProjectIndex] = useState<number | null>(null);
 
@@ -170,9 +173,9 @@ export default function App() {
     window.dispatchEvent(new Event('themechange'));
   }, [themeMode]);
 
-  // Body overflow lock for mobile menu or project modal
+  // Body overflow lock for entrance preloader, mobile menu, or project modal
   useEffect(() => {
-    if (mobileMenuOpen || modalProjectIndex !== null) {
+    if (showEntrance || mobileMenuOpen || modalProjectIndex !== null) {
       document.body.style.overflow = 'hidden';
     } else {
       document.body.style.overflow = '';
@@ -180,7 +183,7 @@ export default function App() {
     return () => {
       document.body.style.overflow = '';
     };
-  }, [mobileMenuOpen, modalProjectIndex]);
+  }, [showEntrance, mobileMenuOpen, modalProjectIndex]);
 
   // Escape key handler for modal & mobile menu
   useEffect(() => {
@@ -201,6 +204,23 @@ export default function App() {
       return () => clearTimeout(t);
     }
   }, [modalProjectIndex]);
+
+  // Trigger Hero staged entrance when EntrancePreloader completes
+  useEffect(() => {
+    if (showEntrance) return;
+    const hero = document.getElementById('hero');
+    const heroName = document.getElementById('heroName');
+    const t = setTimeout(() => {
+      if (hero) {
+        hero.classList.add('in');
+        hero.querySelectorAll<HTMLElement>('[data-reveal]').forEach((el) => {
+          el.classList.add('in');
+        });
+      }
+      if (heroName) heroName.classList.add('in');
+    }, 100);
+    return () => clearTimeout(t);
+  }, [showEntrance]);
 
   // Master Motion, SVG, & Scroll Storytelling Engine (from motion.js + viz.js)
   useEffect(() => {
@@ -375,11 +395,13 @@ export default function App() {
     const hero = document.getElementById('hero');
     const heroName = document.getElementById('heroName');
     const heroTimer = setTimeout(() => {
-      if (hero) {
-        hero.classList.add('in');
-        hero.querySelectorAll<HTMLElement>('[data-reveal]').forEach(show);
+      if (!showEntrance) {
+        if (hero) {
+          hero.classList.add('in');
+          hero.querySelectorAll<HTMLElement>('[data-reveal]').forEach(show);
+        }
+        if (heroName) heroName.classList.add('in');
       }
-      if (heroName) heroName.classList.add('in');
     }, 60);
 
     // 6. Count-up for % metrics
@@ -639,6 +661,9 @@ export default function App() {
 
   return (
     <div ref={rootRef}>
+      {showEntrance && (
+        <EntrancePreloader onComplete={() => setShowEntrance(false)} />
+      )}
       <div className="progress" id="progress" />
       <div className="grain" aria-hidden="true" />
       <div className="tip" id="tip" role="status" />
@@ -646,7 +671,17 @@ export default function App() {
       {/* ================= NAV ================= */}
       <header className="nav" id="nav">
         <div className="wrap nav-in">
-          <a href="#top" className="brand" aria-label="Back to top">
+          <a
+            href="#top"
+            className="brand"
+            aria-label="Back to top (Replay entrance)"
+            title="Click to replay cinematic entrance animation"
+            onClick={(e) => {
+              if (e.metaKey || e.ctrlKey) return;
+              setShowEntrance(true);
+              window.scrollTo({ top: 0, behavior: 'instant' });
+            }}
+          >
             <span className="brand-mark">SK</span>
             <span>{P.name}</span>
           </a>
@@ -658,6 +693,21 @@ export default function App() {
             ))}
           </nav>
           <div className="nav-right">
+            <button
+              type="button"
+              className="icon-btn hide-sm"
+              id="replayBtn"
+              onClick={() => {
+                setShowEntrance(true);
+                window.scrollTo({ top: 0, behavior: 'instant' });
+              }}
+              aria-label="Replay entrance sequence"
+              title="Replay cinematic entrance sequence"
+            >
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" width="14" height="14">
+                <path strokeLinecap="round" strokeLinejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+              </svg>
+            </button>
             <button
               type="button"
               className="icon-btn"
