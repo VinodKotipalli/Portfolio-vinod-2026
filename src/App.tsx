@@ -270,16 +270,26 @@ export default function App() {
       if (FINE && !RM) {
         const inner = stageEl.querySelector<HTMLElement>('.stage-in');
         const card = stageEl.querySelector<HTMLElement>('.layer.card');
+        const base = stageEl.querySelector<HTMLElement>('.layer.base');
         const onPointerMove = (e: PointerEvent) => {
           const r = stageEl.getBoundingClientRect();
           const x = (e.clientX - r.left) / r.width - 0.5;
           const y = (e.clientY - r.top) / r.height - 0.5;
-          if (inner) inner.style.transform = `rotateY(${x * 6}deg) rotateX(${-y * 5}deg)`;
-          if (card) card.style.transform = `translateZ(60px) translate(${x * 10}px,${y * 10}px)`;
+          // Pronounced cinematic rotation tilt
+          if (inner) inner.style.transform = `rotateY(${x * 13}deg) rotateX(${-y * 11}deg)`;
+          // Subtle dynamic depth offset (Z-elevation) and amplified parallax translation for card layer
+          const depthOffset = 72 + Math.round(Math.hypot(x, y) * 26);
+          if (card) {
+            card.style.transform = `translateZ(${depthOffset}px) translate(${x * 24}px,${y * 20}px) rotateY(${x * 4}deg) rotateX(${-y * 3}deg)`;
+          }
+          if (base) {
+            base.style.transform = `translate(${-x * 8}px,${-y * 6}px)`;
+          }
         };
         const onPointerLeave = () => {
           if (inner) inner.style.transform = '';
           if (card) card.style.transform = '';
+          if (base) base.style.transform = '';
         };
         stageEl.addEventListener('pointermove', onPointerMove);
         stageEl.addEventListener('pointerleave', onPointerLeave);
