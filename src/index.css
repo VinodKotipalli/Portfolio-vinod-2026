@@ -27,6 +27,8 @@
   --sans:"Instrument Sans", "Helvetica Neue", Helvetica, sans-serif;
   --serif:"Instrument Serif", "Times New Roman", serif;
   --mono:"JetBrains Mono", ui-monospace, monospace;
+  --script:"Caveat", cursive;
+  --display-bold:"Syne", sans-serif;
 
   --bg:var(--paper);
   --fg:var(--ink);
@@ -192,6 +194,8 @@ a.chip:hover,button.chip:hover{color:var(--fg);border-color:var(--fg-3)}
 .badge span{font-family:var(--mono);font-size:10px;letter-spacing:.16em;color:var(--fg-3)}
 .watermark{position:absolute;left:0;right:0;top:96px;text-align:center;font-size:clamp(40px,9vw,160px);font-weight:600;letter-spacing:-.04em;white-space:nowrap;
   color:transparent;-webkit-text-stroke:1px var(--line);pointer-events:none;user-select:none}
+
+
 
 /* hero network */
 .net-line{stroke:var(--fg);stroke-opacity:.14;stroke-width:1;fill:none;stroke-dasharray:var(--len);stroke-dashoffset:var(--len);transition:stroke-dashoffset 2.4s var(--ease)}

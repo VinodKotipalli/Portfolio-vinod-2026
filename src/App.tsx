@@ -806,113 +806,91 @@ export default function App() {
 
       <main id="top">
         {/* ================= HERO ================= */}
-        <section className="hero" id="hero" data-tone="light" data-screen-label="01 Hero">
-          <div className="watermark" aria-hidden="true" data-speed="-0.12">
-            DEVOPS • CLOUD • SRE
-          </div>
-          <div className="hero-net" id="heroNet" ref={heroNetRef} aria-hidden="true">
-            <div dangerouslySetInnerHTML={{ __html: buildHeroNetworkSvg() }} />
+        <section className="sec hero relative" id="hero" data-tone="dark" data-screen-label="01 Hero">
+          <div className="hero-net" id="heroNet" ref={heroNetRef}>
+            <div
+              className="w-full h-full"
+              dangerouslySetInnerHTML={{ __html: buildHeroNetworkSvg() }}
+            />
             <div className="fade-l" />
           </div>
-          <div className="wrap" style={{ position: 'relative', width: '100%' }}>
-            <div className="hero-top" data-reveal="fade" data-delay="80">
-              <span className="pill">
+          <div className="watermark" aria-hidden="true">
+            {P.firstName.toUpperCase()}
+          </div>
+          <div className="wrap relative z-10">
+            <div className="hero-top" data-reveal>
+              <div className="pill">
                 <span className="dot" />
-                AWS DEVOPS ENGINEER
-              </span>
-              <span className="loc">
+                <span>LIVE · TCS June 2024–Present</span>
+              </div>
+              <div className="loc">
                 <i />
                 <span>{P.location}</span>
-              </span>
+              </div>
             </div>
 
-            <h1 className="focus" id="heroName" aria-label={P.name}>
-              <span className="l1" aria-hidden="true">
-                {[...firstNameWord].map((c, i) => (
-                  <span key={i} className="c" style={{ transitionDelay: `${200 + i * 45}ms` }}>
-                    {c === ' ' ? '\u00A0' : c}
-                  </span>
-                ))}
-              </span>
-              <span className="l2" aria-hidden="true">
-                {[...lastNameWord].map((c, i) => (
-                  <span key={i} className="c" style={{ transitionDelay: `${520 + i * 45}ms` }}>
-                    {c === ' ' ? '\u00A0' : c}
-                  </span>
-                ))}
-              </span>
+            <h1 id="heroName">
+              <span className="l1">{P.firstName}</span>
+              <span className="l2">Kotipalli</span>
             </h1>
 
-            <div className="hero-role" data-reveal="fade" data-delay="900">
+            <div className="hero-role" data-reveal>
               <span className="bar" />
-              <span>
-                AWS DevOps <em>Engineer</em>
-              </span>
+              <span>{H.titleHighlight}</span>
             </div>
 
             <div className="hero-grid">
               <div>
-                <p className="hero-sub" data-reveal data-delay="1100">
+                <p className="hero-sub" data-reveal>
                   {H.subtitle}
                 </p>
-                <div className="chips" id="heroChips" data-reveal data-delay="1250">
-                  <a className="chip" href={`mailto:${P.email}`}>
-                    <span className="k">Email</span>
-                    {P.email}
+                <div className="chips" data-reveal>
+                  <a className="chip" href="#skills">
+                    <span className="k">Cloud</span> AWS (2+ yrs)
                   </a>
-                  <a className="chip" href={`tel:${P.phone.replace(/\s+/g, '')}`}>
-                    <span className="k">Tel</span>
-                    {P.phone}
+                  <a className="chip" href="#skills">
+                    <span className="k">IaC</span> Terraform · CloudFormation
                   </a>
-                  <a
-                    className="chip"
-                    href={S.github}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="GitHub: VinodKotipalli"
-                  >
-                    {ICON.github}
-                    <span>GitHub Profile</span>
+                  <a className="chip" href="#skills">
+                    <span className="k">Ops</span> Kubernetes · Docker
                   </a>
-                  <span className="chip">
-                    <span className="k">Now</span>TCS (June 2024 – Present)
-                  </span>
+                  <a className="chip" href="#skills">
+                    <span className="k">Obs</span> Prometheus · Grafana
+                  </a>
                 </div>
               </div>
 
-              <div className="cta" id="heroCta" data-reveal data-delay="1400">
+              <div className="cta" data-reveal>
                 <a className="btn primary" href={H.ctaPrimary.href}>
                   <span>{H.ctaPrimary.text}</span>
                   <span className="arr">↓</span>
                 </a>
-                <a className="btn" href={H.ctaSecondary.href}>
-                  {H.ctaSecondary.text}
-                </a>
                 <button
                   type="button"
-                  className="btn ghost"
+                  className="btn ghost cursor-pointer"
                   onClick={() => downloadResumePdf('Saivinod_Kotipalli_Resume.pdf')}
                 >
                   {ICON.down}
                   <span>{H.ctaResume.text}</span>
                 </button>
+                <a className="btn ghost" href={H.ctaSecondary.href}>
+                  <span>{H.ctaSecondary.text}</span>
+                </a>
               </div>
             </div>
 
-            <div className="hero-foot" data-reveal="fade" data-delay="1600">
-              <a href="#about" className="scroll-cue" aria-label="Scroll to About section">
+            <div className="hero-foot" data-reveal>
+              <div className="scroll-cue">
                 <span className="ln" />
-                Scroll
-              </a>
+                <span>SCROLL TO EXPLORE</span>
+              </div>
               <div className="hero-badges">
                 <div className="badge">
                   <b>99.9%</b>
-                  <span>UPTIME</span>
+                  <span>PROD UPTIME</span>
                 </div>
                 <div className="badge">
-                  <b style={{ fontFamily: 'var(--serif)', fontStyle: 'italic', fontWeight: 400 }}>
-                    ∞
-                  </b>
+                  <b>∞</b>
                   <span>OBSERVABILITY</span>
                 </div>
               </div>
