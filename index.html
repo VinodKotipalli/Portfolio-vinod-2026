@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" data-tone="light">
+<html lang="en" data-theme="dark" data-tone="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
@@ -10,7 +10,19 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Saivinod Kotipalli Portfolio" />
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="theme-color" content="#f3f2ee" />
+    <meta name="theme-color" content="#07080b" />
+    <script>
+      (function() {
+        try {
+          var saved = localStorage.getItem('sk_theme');
+          var theme = saved === 'light' || saved === 'dark' ? saved : 'dark';
+          document.documentElement.dataset.theme = theme;
+          document.documentElement.dataset.tone = theme;
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.content = theme === 'dark' ? '#07080b' : '#f3f2ee';
+        } catch (e) {}
+      })();
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link

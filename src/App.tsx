@@ -1,7 +1,6 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { portfolioData } from './data/portfolioData';
 import { buildHeroNetworkSvg, forProject } from './utils/vizEngine';
-import { downloadResumePdf } from './utils/generateResumePdf';
 import { EntrancePreloader } from './components/EntrancePreloader';
 
 const ICON = {
@@ -137,17 +136,21 @@ export default function App() {
   const E = portfolioData.experience;
   const Ed = portfolioData.education;
 
-  // Theme state: 'auto' (scroll-driven light/dark tone) or 'dark' (forced dark) or 'light' (forced light)
-  const [themeMode, setThemeMode] = useState<'auto' | 'dark'>(() => {
+  // Theme state: strict 'dark' or 'light' mode
+  const [themeMode, setThemeMode] = useState<'dark' | 'light'>(() => {
     if (typeof window !== 'undefined') {
       const saved = localStorage.getItem('sk_theme');
+      if (saved === 'light') return 'light';
       if (saved === 'dark') return 'dark';
+      if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
+        return 'light';
+      }
     }
-    return 'auto';
+    return 'dark';
   });
 
   const handleThemeToggle = useCallback(() => {
-    setThemeMode((m) => (m === 'dark' ? 'auto' : 'dark'));
+    setThemeMode((m) => (m === 'dark' ? 'light' : 'dark'));
   }, []);
 
   // Entrance Preloader state
@@ -170,10 +173,15 @@ export default function App() {
   const stageRefs = useRef<(HTMLDivElement | null)[]>([]);
   const closeBtnRef = useRef<HTMLButtonElement | null>(null);
 
-  // Theme sync
+  // Theme sync: ensure html dataset.theme, dataset.tone, meta theme-color, and localStorage stay in sync
   useEffect(() => {
     document.documentElement.dataset.theme = themeMode;
+    document.documentElement.dataset.tone = themeMode;
     localStorage.setItem('sk_theme', themeMode);
+    const metaTheme = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.content = themeMode === 'dark' ? '#07080b' : '#f3f2ee';
+    }
     window.dispatchEvent(new Event('themechange'));
   }, [themeMode]);
 
@@ -325,6 +333,32 @@ export default function App() {
       }
     });
 
+    // 2b. Interactive 3D tilt on Experience card and Linux Lab (desktop only)
+    if (FINE && !RM) {
+      const tiltCards = [
+        document.getElementById('expCard'),
+        container.querySelector<HTMLElement>('.lab'),
+      ].filter(Boolean) as HTMLElement[];
+
+      tiltCards.forEach((cardEl) => {
+        const onCardPointerMove = (e: PointerEvent) => {
+          const r = cardEl.getBoundingClientRect();
+          const x = (e.clientX - r.left) / r.width - 0.5;
+          const y = (e.clientY - r.top) / r.height - 0.5;
+          cardEl.style.transform = `perspective(1000px) rotateY(${x * 6}deg) rotateX(${-y * 5}deg) translateY(-4px)`;
+        };
+        const onCardPointerLeave = () => {
+          cardEl.style.transform = '';
+        };
+        cardEl.addEventListener('pointermove', onCardPointerMove);
+        cardEl.addEventListener('pointerleave', onCardPointerLeave);
+        cleanups.push(() => {
+          cardEl.removeEventListener('pointermove', onCardPointerMove);
+          cardEl.removeEventListener('pointerleave', onCardPointerLeave);
+        });
+      });
+    }
+
     // 3. Split headlines into masked words (idempotent)
     container.querySelectorAll<HTMLElement>('[data-split]').forEach((el) => {
       if (el.dataset.splitDone === '1') return;
@@ -457,10 +491,9 @@ export default function App() {
       });
     }
 
-    // 8. Scroll loop: progress, nav, tone transitions, parallax, about word scrub
+    // 8. Scroll loop: progress, nav, parallax, about word scrub
     const nav = document.getElementById('nav');
     const prog = document.getElementById('progress');
-    const toneEls = [...container.querySelectorAll<HTMLElement>('[data-tone]')];
     const navLinks = [...container.querySelectorAll<HTMLAnchorElement>('#navLinks a')];
     const sections = navLinks.map((a) => {
       const href = a.getAttribute('href');
@@ -492,25 +525,14 @@ export default function App() {
       }
       lastY = y;
 
-      // Section crossing 45% of viewport sets page tone (unless forced dark)
-      let tone = 'light';
-      if (htmlRoot.dataset.theme === 'dark') {
-        tone = 'dark';
-      } else {
-        for (const el of toneEls) {
-          const r = el.getBoundingClientRect();
-          if (r.top <= vh * 0.45 && r.bottom > vh * 0.45) {
-            tone = el.dataset.tone || 'light';
-            break;
-          }
-        }
-      }
-      if (tone !== curTone) {
-        htmlRoot.dataset.tone = tone;
-        curTone = tone;
+      // Active theme persistence: portfolio remains strictly in user-selected dark or light theme
+      const activeTheme = htmlRoot.dataset.theme === 'light' ? 'light' : 'dark';
+      if (htmlRoot.dataset.tone !== activeTheme || curTone !== activeTheme) {
+        htmlRoot.dataset.tone = activeTheme;
+        curTone = activeTheme;
         const metaTheme = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]');
         if (metaTheme) {
-          metaTheme.content = tone === 'dark' ? '#07080b' : '#f3f2ee';
+          metaTheme.content = activeTheme === 'dark' ? '#07080b' : '#f3f2ee';
         }
       }
 
@@ -532,6 +554,10 @@ export default function App() {
       });
       if (heroNet && y < vh * 1.2) {
         heroNet.style.transform = `translate3d(0,${y * 0.18}px,0)`;
+      }
+      const watermarkEl = document.querySelector<HTMLElement>('.watermark');
+      if (watermarkEl && y < vh * 1.2) {
+        watermarkEl.style.transform = `translate3d(0,${y * -0.07}px,0)`;
       }
 
       // About word-by-word scrub
@@ -717,8 +743,8 @@ export default function App() {
               className="icon-btn"
               id="themeBtn"
               onClick={handleThemeToggle}
-              aria-label={forcedDark ? 'Switch to light mode' : 'Switch to dark mode'}
-              title={forcedDark ? 'Switch to light mode' : 'Switch to dark mode'}
+              aria-label={forcedDark ? 'Switch to light theme' : 'Switch to dark theme'}
+              title={forcedDark ? 'Switch to light theme' : 'Switch to dark theme'}
             >
               {forcedDark ? ICON.sun : ICON.moon}
             </button>
@@ -791,11 +817,11 @@ export default function App() {
             type="button"
             className="icon-btn"
             onClick={handleThemeToggle}
-            aria-label={forcedDark ? 'Switch to light mode' : 'Switch to dark mode'}
-            title={forcedDark ? 'Switch to light mode' : 'Switch to dark mode'}
+            aria-label={forcedDark ? 'Switch to light theme' : 'Switch to dark theme'}
+            title={forcedDark ? 'Switch to light theme' : 'Switch to dark theme'}
           >
             {forcedDark ? ICON.sun : ICON.moon}
-            <span>{forcedDark ? 'Light Mode' : 'Dark Mode'}</span>
+            <span>{forcedDark ? 'Light Theme' : 'Dark Theme'}</span>
           </button>
           <a
             className="icon-btn"
@@ -820,7 +846,7 @@ export default function App() {
 
       <main id="top">
         {/* ================= HERO ================= */}
-        <section className="sec hero relative" id="hero" data-tone="dark" data-screen-label="01 Hero">
+        <section className="sec hero relative" id="hero" data-screen-label="01 Hero">
           <div className="hero-net" id="heroNet" ref={heroNetRef}>
             <div className="w-full h-full" dangerouslySetInnerHTML={{ __html: buildHeroNetworkSvg() }} />
             <div className="fade-l" />
@@ -884,11 +910,10 @@ export default function App() {
                 <a
                   className="btn ghost"
                   href={H.ctaResume.href}
-                  download="Saivinod_Kotipalli_Resume.pdf"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    downloadResumePdf('Saivinod_Kotipalli_Resume.pdf');
-                  }}
+                  download="Saivinod_Kotipalli_AWS_DevOps_Engineer_2__YOE.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Download Saivinod Kotipalli AWS DevOps Engineer Resume PDF"
                 >
                   <span>{H.ctaResume.text}</span>
                   <span className="arr">↓</span>
@@ -916,7 +941,7 @@ export default function App() {
         </section>
 
         {/* ================= ABOUT ================= */}
-        <section className="sec" id="about" data-tone="light" data-screen-label="02 About">
+        <section className="sec" id="about" data-screen-label="02 About">
           <div className="wrap about-grid">
             <div className="about-side">
               <div className="eyebrow" data-reveal>
@@ -943,21 +968,24 @@ export default function App() {
                   <span>→</span>
                   <span>Experience</span>
                 </a>
-                <button
-                  type="button"
+                <a
+                  href={H.ctaResume.href}
                   className="btn ghost"
-                  onClick={() => downloadResumePdf('Saivinod_Kotipalli_Resume.pdf')}
+                  download="Saivinod_Kotipalli_AWS_DevOps_Engineer_2__YOE.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Download Saivinod Kotipalli AWS DevOps Engineer Resume PDF"
                 >
                   {ICON.down}
-                  <span>Resume</span>
-                </button>
+                  <span>Download Resume</span>
+                </a>
               </div>
             </div>
           </div>
         </section>
 
         {/* ================= SKILLS ================= */}
-        <section className="sec" id="skills" data-tone="light" data-screen-label="03 Skills">
+        <section className="sec" id="skills" data-screen-label="03 Skills">
           <div className="wrap">
             <div className="sec-head">
               <div>
@@ -1001,7 +1029,7 @@ export default function App() {
         </section>
 
         {/* ================= EXPERIENCE ================= */}
-        <section className="sec" id="experience" data-tone="dark" data-screen-label="04 Experience">
+        <section className="sec" id="experience" data-screen-label="04 Experience">
           <div className="wrap">
             <div className="sec-head">
               <div>
@@ -1059,7 +1087,6 @@ export default function App() {
         <section
           className="sec"
           id="achievements"
-          data-tone="dark"
           data-screen-label="05 Achievements"
           style={{ paddingTop: 0 }}
         >
@@ -1106,7 +1133,7 @@ export default function App() {
         </section>
 
         {/* ================= PROJECTS ================= */}
-        <section className="sec" id="projects" data-tone="dark" data-screen-label="06 Projects">
+        <section className="sec" id="projects" data-screen-label="06 Projects">
           <div className="wrap">
             <div className="sec-head">
               <div>
@@ -1205,7 +1232,6 @@ export default function App() {
         <section
           className="sec"
           id="certifications"
-          data-tone="light"
           data-screen-label="07 Certifications"
         >
           <div className="wrap">
@@ -1263,7 +1289,6 @@ export default function App() {
         <section
           className="sec"
           id="education"
-          data-tone="light"
           data-screen-label="08 Education"
           style={{ paddingTop: 0 }}
         >
@@ -1314,7 +1339,7 @@ export default function App() {
         </section>
 
         {/* ================= CONTACT ================= */}
-        <section className="sec" id="contact" data-tone="dark" data-screen-label="09 Contact">
+        <section className="sec" id="contact" data-screen-label="09 Contact">
           <div className="wrap">
             <h2 className="sr">Contact</h2>
             <div className="contact-head">
@@ -1446,7 +1471,7 @@ export default function App() {
       </main>
 
       {/* ================= FOOTER ================= */}
-      <footer className="footer" data-tone="dark" id="footer" data-screen-label="10 Footer">
+      <footer className="footer" id="footer" data-screen-label="10 Footer">
         <div className="wrap">
           <div className="quotes">
             <div className="quote" data-reveal>

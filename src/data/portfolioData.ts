@@ -105,8 +105,8 @@ export const portfolioData: PortfolioData = {
     name: "Saivinod Kotipalli",
     firstName: "Saivinod",
     brandName: "Saivinod Kotipalli",
-    title: "AWS DevOps Engineer | Site Reliability & Cloud Infrastructure",
-    location: "Srikakulam, Andhra Pradesh 532401",
+    title: "AWS DevOps Engineer | Site Reliability & DevOps",
+    location: "Srikakulam, Andhra Pradesh",
     phone: "+91 8520899337",
     phoneRaw: "8520899337",
     whatsappUrl: "https://wa.me/918520899337",
@@ -115,8 +115,8 @@ export const portfolioData: PortfolioData = {
       primary: "saivinodkotipalli2003@gmail.com",
     },
     summary:
-      "AWS DevOps Engineer with 2+ years of experience specializing in site reliability engineering (SRE), cloud monitoring, and infrastructure automation. Highly skilled in Infrastructure as Code (Terraform, CloudFormation), CI/CD pipelines (Jenkins, GitHub Actions), and centralized observability (Prometheus, Grafana). Proven ability to manage AWS environments, optimize performance using the AWS Well-Architected Framework, and reduce Mean Time to Detect (MTTD).",
-    resumeUrl: "/Saivinod_Kotipalli_Resume.pdf",
+      "AWS DevOps Engineer with 2+ years across cloud monitoring, infrastructure automation and SRE. Cut release cycles from weekly to daily, reduced infrastructure provisioning time by 80%, and maintained zero critical security findings through automated compliance controls. Dual AWS-certified (Solutions Architect and CloudOps Engineer, Associate). Designs and automates end-to-end, from Terraform-provisioned infrastructure to CI/CD pipelines and observability, collaborating with DevOps, SRE and application teams.",
+    resumeUrl: "/assets/aistudio/Saivinod_Kotipalli_AWS_DevOps_Engineer_2__YOE_cbb6f6a0.pdf",
   },
   socialLinks: {
     github: "https://github.com/VinodKotipalli",
@@ -128,7 +128,7 @@ export const portfolioData: PortfolioData = {
     greeting: "Hi, I'm Saivinod Kotipalli",
     titleHighlight: "AWS DevOps Engineer",
     subtitle:
-      "AWS DevOps Engineer with 2+ years of experience specializing in site reliability engineering (SRE), cloud monitoring, and infrastructure automation.",
+      "AWS DevOps Engineer with 2+ years across cloud monitoring, infrastructure automation and SRE. Cut release cycles from weekly to daily, reduced infrastructure provisioning time by 80%.",
     ctaPrimary: {
       text: "View Experience",
       href: "#experience",
@@ -139,7 +139,7 @@ export const portfolioData: PortfolioData = {
     },
     ctaResume: {
       text: "Download Resume",
-      href: "/Saivinod_Kotipalli_Resume.pdf",
+      href: "/assets/aistudio/Saivinod_Kotipalli_AWS_DevOps_Engineer_2__YOE_cbb6f6a0.pdf",
     },
   },
   technicalSkills: [
