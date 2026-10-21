@@ -907,17 +907,19 @@ export default function App() {
                   <span>{H.ctaSecondary.text}</span>
                   <span className="arr">↗</span>
                 </a>
-                <a
-                  className="btn ghost"
-                  href={H.ctaResume.href}
-                  download="Saivinod_Kotipalli-DevOps_Resume.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Download Saivinod Kotipalli DevOps Resume PDF"
-                >
-                  <span>{H.ctaResume.text}</span>
-                  <span className="arr">↓</span>
-                </a>
+                {H.ctaResume && (
+                  <a
+                    className="btn ghost"
+                    href={H.ctaResume.href}
+                    download="Saivinod_Kotipalli-DevOps_Resume.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Download Saivinod Kotipalli DevOps Resume PDF"
+                  >
+                    <span>{H.ctaResume.text}</span>
+                    <span className="arr">↓</span>
+                  </a>
+                )}
               </div>
             </div>
 
@@ -968,17 +970,24 @@ export default function App() {
                   <span>→</span>
                   <span>Experience</span>
                 </a>
-                <a
-                  href={H.ctaResume.href}
-                  className="btn ghost"
-                  download="Saivinod_Kotipalli-DevOps_Resume.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  aria-label="Download Saivinod Kotipalli DevOps Resume PDF"
-                >
-                  {ICON.down}
-                  <span>Download Resume</span>
-                </a>
+                {H.ctaResume ? (
+                  <a
+                    href={H.ctaResume.href}
+                    className="btn ghost"
+                    download="Saivinod_Kotipalli-DevOps_Resume.pdf"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Download Saivinod Kotipalli DevOps Resume PDF"
+                  >
+                    {ICON.down}
+                    <span>Download Resume</span>
+                  </a>
+                ) : (
+                  <a href="#contact" className="btn ghost">
+                    <span>→</span>
+                    <span>Get In Touch</span>
+                  </a>
+                )}
               </div>
             </div>
           </div>
