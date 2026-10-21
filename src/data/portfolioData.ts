@@ -115,8 +115,8 @@ export const portfolioData: PortfolioData = {
       primary: "saivinodkotipalli2003@gmail.com",
     },
     summary:
-      "AWS DevOps Engineer with 2+ years across cloud monitoring, infrastructure automation and SRE. Cut release cycles from weekly to daily, reduced infrastructure provisioning time by 80%, and maintained zero critical security findings through automated compliance controls. Dual AWS-certified (Solutions Architect and CloudOps Engineer, Associate). Designs and automates end-to-end, from Terraform-provisioned infrastructure to CI/CD pipelines and observability, collaborating with DevOps, SRE and application teams.",
-    resumeUrl: "/assets/aistudio/Saivinod_Kotipalli_AWS_DevOps_Engineer_2__YOE_cbb6f6a0.pdf",
+      "AWS DevOps Engineer with 2+ years across cloud monitoring, infrastructure automation and SRE. Cut release cycles from weekly to daily, reduced infrastructure provisioning time by 80%, and maintained zero critical security findings through automated compliance controls. Dual AWS-certified (Solutions Architect and Data Engineer, Associate). Builds with Terraform, Jenkins, Prometheus and Grafana, and works closely with DevOps, SRE and application teams.",
+    resumeUrl: "/assets/aistudio/Saivinod_Kotipalli-DevOps_Resume_ea78baed.pdf",
   },
   socialLinks: {
     github: "https://github.com/VinodKotipalli",
@@ -139,7 +139,7 @@ export const portfolioData: PortfolioData = {
     },
     ctaResume: {
       text: "Download Resume",
-      href: "/assets/aistudio/Saivinod_Kotipalli_AWS_DevOps_Engineer_2__YOE_cbb6f6a0.pdf",
+      href: "/assets/aistudio/Saivinod_Kotipalli-DevOps_Resume_ea78baed.pdf",
     },
   },
   technicalSkills: [

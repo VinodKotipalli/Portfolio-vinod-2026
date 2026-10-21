@@ -910,10 +910,10 @@ export default function App() {
                 <a
                   className="btn ghost"
                   href={H.ctaResume.href}
-                  download="Saivinod_Kotipalli_AWS_DevOps_Engineer_2__YOE.pdf"
+                  download="Saivinod_Kotipalli-DevOps_Resume.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Download Saivinod Kotipalli AWS DevOps Engineer Resume PDF"
+                  aria-label="Download Saivinod Kotipalli DevOps Resume PDF"
                 >
                   <span>{H.ctaResume.text}</span>
                   <span className="arr">↓</span>
@@ -971,10 +971,10 @@ export default function App() {
                 <a
                   href={H.ctaResume.href}
                   className="btn ghost"
-                  download="Saivinod_Kotipalli_AWS_DevOps_Engineer_2__YOE.pdf"
+                  download="Saivinod_Kotipalli-DevOps_Resume.pdf"
                   target="_blank"
                   rel="noopener noreferrer"
-                  aria-label="Download Saivinod Kotipalli AWS DevOps Engineer Resume PDF"
+                  aria-label="Download Saivinod Kotipalli DevOps Resume PDF"
                 >
                   {ICON.down}
                   <span>Download Resume</span>
